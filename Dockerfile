@@ -18,6 +18,7 @@ RUN apt-get update && apt-get install -y apache2 \
     joe \
     texlive texlive-lang-german texlive-latex-extra \
     graphicsmagick-imagemagick-compat \
+    plantuml \
  && apt-get clean \
  && apt-get autoremove \
  && rm -rf /var/lib/apt/lists/*
@@ -37,7 +38,7 @@ COPY ./apache-flask.wsgi /var/www/apache-flask/apache-flask.wsgi
 COPY ./run.py /var/www/apache-flask/run.py
 COPY ./app /var/www/apache-flask/app/
 COPY ./app/static/index.html /var/www/
-
+COPY ./formula.tex /var/www/apache-flask/
 RUN a2dissite 000-default.conf
 RUN a2ensite apache-flask.conf
 

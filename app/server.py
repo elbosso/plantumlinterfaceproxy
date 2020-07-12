@@ -8,7 +8,7 @@ from app import plant_uml_decoder
 from subprocess import Popen, PIPE
 
 ns = api.namespace('', description='badges for gitlab')
-@ns.route('/proxy/<encoded>')
+@ns.route('/proxy/png/<encoded>')
 @ns.param('encoded', 'The encoded script contents')
 class OpenIssue(Resource):
     def get(self, encoded):
@@ -16,34 +16,51 @@ class OpenIssue(Resource):
         """
         url = 'http://' + os.environ['PLANTUML_HOST'] + ':' + os.environ['PLANTUML_PORT'] + '/' + os.environ[
             'PLANTUML_URL'] + '/' + str(encoded)
-        decoded=plant_uml_decoder.plantuml_decode(encoded)
         attachment_filename = 'plantuml.png'
         mimetype = 'image/png'
+        try:
+            decoded=plant_uml_decoder.plantuml_decode(encoded)
+        except:
+            process = Popen(['plantuml','-decodeurl', encoded[2:]], stdout=PIPE, stderr=PIPE)
+            stdout, stderr = process.communicate()
+            print (stdout)
+            print('-++-')
+            print (stderr)
+            decoded=stdout.decode('utf-8')
+        attachment_filename = 'plantuml.png'
+        mimetype = 'image/png'
+        print('::')
+        print (decoded)
+        while(decoded.startswith('@startuml')):
+            decoded=decoded[9:-8].strip()
+        print('::')
+        print (decoded)
         if(decoded.startswith('%TeX')):
             decoded=decoded[4:].strip()
             print('TeX')
             print(decoded)
-            texdoc='\\def\\formula{' + decoded + '}\\input{/home/elbosso/formula.tex}'
+            texdoc='\\def\\formula{' + decoded + '}\\input{/var/www/apache-flask/formula.tex}'
             print (texdoc)
-            process = Popen(['pdflatex', texdoc], stdout=PIPE, stderr=PIPE)
+            process = Popen(['pdflatex','-output-directory', '/tmp', texdoc], stdout=PIPE, stderr=PIPE)
             stdout, stderr = process.communicate()
             print (stdout)
             print('----')
             print (stderr)
-            file_out=tempfile.NamedTemporaryFile()
+            file_out=tempfile.NamedTemporaryFile(suffix='.png')
             print(file_out.name)
-            process = Popen(['convert', '-density', '130', 'formula.pdf', file_out.name+'.png'], stdout=PIPE, stderr=PIPE)
+            process = Popen(['convert', '-density', os.environ['TEX_DPI'], '/tmp/formula.pdf', file_out.name], stdout=PIPE, stderr=PIPE)
             stdout, stderr = process.communicate()
             print (stdout)
             print('----')
             print (stderr)
             attachment_filename="formula.png"
-            return send_file(file_out.name+'.png',
+            return send_file(file_out.name,
                              as_attachment=True,
                              attachment_filename=attachment_filename,
                              mimetype=mimetype)
         else:
             if(decoded.startswith('#wireviz')):
+                encoded=plant_uml_decoder.plantuml_encode(decoded)
                 url = 'http://' + os.environ['WIREVIZ_HOST'] + ':' + os.environ['WIREVIZ_PORT'] + '/' + os.environ[
                     'WIREVIZ_URL'] + '/' + str(encoded)
                 attachment_filename = 'wireviz.png'

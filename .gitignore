@@ -5,3 +5,4 @@ venv
 *.aux
 *.log
 *.pdf
+environment.env
