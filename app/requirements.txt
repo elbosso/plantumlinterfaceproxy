@@ -1,0 +1,6 @@
+Flask
+matplotlib
+image
+requests
+flask-restplus
+Werkzeug==0.16.1

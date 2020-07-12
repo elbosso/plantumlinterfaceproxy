@@ -1,0 +1,7 @@
+*~
+DEADJOE
+venv
+.idea
+*.aux
+*.log
+*.pdf

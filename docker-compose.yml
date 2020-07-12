@@ -1,0 +1,22 @@
+version: '2'
+
+services:
+  plantumlinterfaceproxy:
+    build: .
+#        ports:
+#        - "80:80"
+    restart: unless-stopped
+    env_file:
+      - environment.env
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.plantumlinterfaceproxy.rule=Host(`plantumlinterfaceproxy.docker.lab`)"
+      - "traefik.http.services.plantumlinterfaceproxy.loadbalancer.server.port=80"
+      - "traefik.docker.network=traefik_proxy"
+    networks:
+      - traefik_proxy
+
+networks:
+  traefik_proxy:
+    external:
+      name: traefik_proxy
