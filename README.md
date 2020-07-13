@@ -30,20 +30,17 @@ Alice->Bob: hello3
 
 Now the user has more options: if the first line of the plantuml script is *`%TeX`*, the remaining content of that script is interpreted
 as a mathematical formula set with TeX and an image is created from it that then appears instead of the script as with plantuml diagrams. 
-An example would be the following fragment:
+An example would be the following fragment (again - enclosed in lines containing ` ```plantuml ` and ` ``` `):
 
 ```
-```plantuml
 %TeX
 x^n + y^n = z^n
 ```
-```
 
 If the first line of the script is *`wireviz`* then the remainder of the script is sent on to a [WireViz]() renderer. This renderer produces and
-image and that image is returned to gitlab, replacing the script. An example for this functionality might be the following fragment:
+image and that image is returned to gitlab, replacing the script. An example for this functionality might be the following fragment (enclosed in lines containing ` ```plantuml ` and ` ``` `):
 
 ```
-```plantuml
 #wireviz
 connectors:
   X1:
@@ -71,7 +68,6 @@ connections:
   -
     - X1: 5
     - W1: s
-```
 ```
 
 The application is designed to run inside a docker container. The docker-compose file has preparations to integrate with traefik2.x.
