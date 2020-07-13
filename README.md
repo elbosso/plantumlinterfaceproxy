@@ -24,10 +24,10 @@ that functionality still works as it has before.
 So for example the following fragment would be replaced with a rendering of the diagram specified in it:
 
 ```
-```plantuml
+\`\`\`plantuml
 Alice->Bob: hello1
 Alice->Bob: hello3
-```
+\`\`\`
 ```
 
 Now the user has more options: if the first line of the plantuml script is *`%TeX`*, the remaining content of that script is interpreted
