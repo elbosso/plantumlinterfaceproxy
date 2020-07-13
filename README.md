@@ -21,13 +21,11 @@ It can be used as a standin for any plantuml server and - as far as plantuml is 
 transparent. If the user configures the _environment.env_ in such a way that the properties point to a plantuml server all
 that functionality still works as it has before.
 
-So for example the following fragment would be replaced with a rendering of the diagram specified in it:
+So for example the following fragment (enclosed in lines containing ` ```plantuml ` and ` ``` `) would be replaced with a rendering of the diagram specified in it:
 
 ```
-\`\`\`plantuml
 Alice->Bob: hello1
 Alice->Bob: hello3
-\`\`\`
 ```
 
 Now the user has more options: if the first line of the plantuml script is *`%TeX`*, the remaining content of that script is interpreted
