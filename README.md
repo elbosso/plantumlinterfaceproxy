@@ -79,4 +79,4 @@ After the container is started, an _index.html_ file with some introduction and 
 to access the Swagger UI GUI for experimenting...
 
 ## Thanks
-Thanks go out to @Tyler-Ward, @formatc1702 and @slightlynybbled for their constructive criticism and ideas - they helped a lot!
+Thanks go out to [@Tyler-Ward](https://github.com/Tyler-Ward), [@formatc1702](https://github.com/formatc1702) and [@slightlynybbled](https://github.com/slightlynybbled) for their constructive criticism and ideas - they helped a lot!
