@@ -15,7 +15,7 @@
 [![Github All Releases](https://img.shields.io/github/downloads/elbosso/plantumlinterfaceproxy/total.svg)](https://github.com/elbosso/plantumlinterfaceproxy)
 [![Website elbosso.github.io](https://img.shields.io/website-up-down-green-red/https/elbosso.github.io.svg)](https://elbosso.github.io/)
 
-This project acts as a backend for the [gitlab]() [plantuml]() [integration]():
+This project acts as a backend for the [gitlab](https://about.gitlab.com/) [plantuml](https://plantuml.com/) [integration](https://docs.gitlab.com/ee/administration/integration/plantuml.html):
 
 It can be used as a standin for any plantuml server and - as far as plantuml is concerned - it is completely 
 transparent. If the user configures the _environment.env_ in such a way that the properties point to a plantuml server all
@@ -37,7 +37,7 @@ An example would be the following fragment (again - enclosed in lines containing
 x^n + y^n = z^n
 ```
 
-If the first line of the script is *`wireviz`* then the remainder of the script is sent on to a [WireViz]() renderer. This renderer produces and
+If the first line of the script is *`wireviz`* then the remainder of the script is sent on to a [WireViz](https://github.com/formatc1702/WireViz) renderer. This renderer produces and
 image and that image is returned to gitlab, replacing the script. An example for this functionality might be the following fragment (enclosed in lines containing ` ```plantuml ` and ` ``` `):
 
 ```
