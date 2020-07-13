@@ -15,7 +15,7 @@
 [![Github All Releases](https://img.shields.io/github/downloads/elbosso/plantumlinterfaceproxy/total.svg)](https://github.com/elbosso/plantumlinterfaceproxy)
 [![Website elbosso.github.io](https://img.shields.io/website-up-down-green-red/https/elbosso.github.io.svg)](https://elbosso.github.io/)
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/gB1UfRYJoYc" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+[![](http://img.youtube.com/vi/gB1UfRYJoYc/0.jpg)](http://www.youtube.com/watch?v=gB1UfRYJoYc "")
 
 This project acts as a backend for the [gitlab](https://about.gitlab.com/) [plantuml](https://plantuml.com/) [integration](https://docs.gitlab.com/ee/administration/integration/plantuml.html):
 
