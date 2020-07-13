@@ -77,3 +77,6 @@ The application is designed to run inside a docker container. The docker-compose
 The docker container needs an environment file named _environment.env_ defining Properties as given in the file _environment.example_.
 After the container is started, an _index.html_ file with some introduction and background is reachable that allows - among other things - 
 to access the Swagger UI GUI for experimenting...
+
+## Thanks
+Thanks go out to @Tyler-Ward, @formatc1702 and @slightlynybbled for their constructive criticism and ideas - they helped a lot!
