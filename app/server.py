@@ -7,6 +7,7 @@ import tempfile
 from app import plant_uml_decoder
 from subprocess import Popen, PIPE
 import re
+import uuid
 
 ns = api.namespace('', description='badges for gitlab')
 @ns.route('/proxy/png/<encoded>')
@@ -24,9 +25,9 @@ class OpenIssue(Resource):
         except:
             process = Popen(['plantuml','-decodeurl', encoded[2:]], stdout=PIPE, stderr=PIPE)
             stdout, stderr = process.communicate()
-            print (stdout)
-            print('-++-')
-            print (stderr)
+            #print (stdout)
+            #print('-++-')
+            #print (stderr)
             decoded=stdout.decode('utf-8')
         attachment_filename = 'plantuml.png'
         mimetype = 'image/png'
@@ -44,7 +45,7 @@ class OpenIssue(Resource):
             #print('TeX')
             #print(decoded)
             texdoc='\\def\\formula{' + decoded + '}\\input{/var/www/apache-flask/formula.tex}'
-            print (texdoc)
+            #print (texdoc)
             theuuid=uuid.uuid4()
             process = Popen(['pdflatex','-jobname',str(theuuid),'-output-directory', '/tmp', texdoc], stdout=PIPE, stderr=PIPE)
             stdout, stderr = process.communicate()
@@ -52,7 +53,7 @@ class OpenIssue(Resource):
             #print('----')
             #print (stderr)
             file_out=tempfile.NamedTemporaryFile(suffix='.png')
-            print(file_out.name)
+            #print(file_out.name)
             process = Popen(['convert', '-density', os.environ['TEX_DPI'], '/tmp/'+str(theuuid)+'.pdf', file_out.name], stdout=PIPE, stderr=PIPE)
             stdout, stderr = process.communicate()
             #print (stdout)
