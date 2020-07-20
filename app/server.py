@@ -6,6 +6,7 @@ from flask_restplus import Api, Resource, fields
 import tempfile
 from app import plant_uml_decoder
 from subprocess import Popen, PIPE
+import uuid
 
 ns = api.namespace('', description='badges for gitlab')
 @ns.route('/proxy/png/<encoded>')
@@ -41,14 +42,15 @@ class OpenIssue(Resource):
             print(decoded)
             texdoc='\\def\\formula{' + decoded + '}\\input{/var/www/apache-flask/formula.tex}'
             print (texdoc)
-            process = Popen(['pdflatex','-output-directory', '/tmp', texdoc], stdout=PIPE, stderr=PIPE)
+            theuuid=uuid.uuid4()
+            process = Popen(['pdflatex','-jobname',str(theuuid),'-output-directory', '/tmp', texdoc], stdout=PIPE, stderr=PIPE)
             stdout, stderr = process.communicate()
             print (stdout)
             print('----')
             print (stderr)
             file_out=tempfile.NamedTemporaryFile(suffix='.png')
             print(file_out.name)
-            process = Popen(['convert', '-density', os.environ['TEX_DPI'], '/tmp/formula.pdf', file_out.name], stdout=PIPE, stderr=PIPE)
+            process = Popen(['convert', '-density', os.environ['TEX_DPI'], '/tmp/'+str(theuuid)+'.pdf', file_out.name], stdout=PIPE, stderr=PIPE)
             stdout, stderr = process.communicate()
             print (stdout)
             print('----')
