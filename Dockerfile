@@ -18,7 +18,8 @@ RUN apt-get update && apt-get install -y apache2 \
     joe \
     texlive texlive-lang-german texlive-latex-extra \
     graphicsmagick-imagemagick-compat \
-    plantuml \
+    plantuml
+    gnuplot\
  && apt-get clean \
  && apt-get autoremove \
  && rm -rf /var/lib/apt/lists/*
