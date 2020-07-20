@@ -6,3 +6,4 @@ venv
 *.log
 *.pdf
 environment.env
+*.png
