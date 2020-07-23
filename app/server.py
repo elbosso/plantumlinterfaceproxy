@@ -29,7 +29,7 @@ class OpenIssue(Resource):
         try:
             decoded=plant_uml_decoder.plantuml_decode(encoded)
         except:
-            process = Popen(['plantuml','-decodeurl', encoded[2:]], stdout=PIPE, stderr=PIPE)
+            process = Popen(['plantuml','-charset','UTF-8','-decodeurl', encoded[2:]], stdout=PIPE, stderr=PIPE)
             stdout, stderr = process.communicate()
             #print (stdout)
             #print('-++-')
