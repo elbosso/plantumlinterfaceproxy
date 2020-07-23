@@ -8,6 +8,8 @@ from app import plant_uml_decoder
 from subprocess import Popen, PIPE
 import re
 import uuid
+import sys
+import locale
 
 ns = api.namespace('', description='badges for gitlab')
 @ns.route('/proxy/png/<encoded>')
@@ -16,6 +18,10 @@ class OpenIssue(Resource):
     def get(self, encoded):
         """
         """
+        print(sys.stdout.encoding)
+        print(locale.getdefaultlocale())
+        print(locale.getpreferredencoding())
+        print(encoded)
         url = 'http://' + os.environ['PLANTUML_HOST'] + ':' + os.environ['PLANTUML_PORT'] + '/' + os.environ[
             'PLANTUML_URL'] + '/' + str(encoded)
         attachment_filename = 'plantuml.png'
