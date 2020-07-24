@@ -1,10 +1,11 @@
-from flask import make_response, jsonify,send_file
+from flask import make_response, jsonify,send_file, Response
 import requests
 from app import api
 import os
 from flask_restplus import Api, Resource, fields
 import tempfile
 from app import plant_uml_decoder
+from app import text2png
 from subprocess import Popen, PIPE
 import re
 import uuid
@@ -50,26 +51,35 @@ class OpenIssue(Resource):
             decoded=decoded[4:].strip()
             #print('TeX')
             #print(decoded)
-            texdoc='\\def\\formula{' + decoded + '}\\input{/var/www/apache-flask/formula.tex}'
+            texdoc='\\def\\formula{' + decoded + '}\\input{/home/elbosso/formula.tex}'
+            #texdoc='\\def\\formula{' + decoded + '}\\input{/var/www/apache-flask/formula.tex}'
             #print (texdoc)
             theuuid=uuid.uuid4()
-            process = Popen(['pdflatex','-jobname',str(theuuid),'-output-directory', '/tmp', texdoc], stdout=PIPE, stderr=PIPE)
+            process = Popen(['pdflatex','-halt-on-error','-jobname',str(theuuid),'-output-directory', '/tmp', texdoc], stdout=PIPE, stderr=PIPE)
             stdout, stderr = process.communicate()
-            #print (stdout)
-            #print('----')
-            #print (stderr)
-            file_out=tempfile.NamedTemporaryFile(suffix='.png')
-            #print(file_out.name)
-            process = Popen(['convert', '-density', os.environ['TEX_DPI'], '/tmp/'+str(theuuid)+'.pdf', file_out.name], stdout=PIPE, stderr=PIPE)
-            stdout, stderr = process.communicate()
-            #print (stdout)
-            #print('----')
-            #print (stderr)
-            attachment_filename="formula.png"
-            return send_file(file_out.name,
+            if process.returncode==0:
+                file_out=tempfile.NamedTemporaryFile(suffix='.png')
+                dpi='95'
+                if 'TEX_DPI' in os.environ:
+                    dpi=os.environ['TEX_DPI']
+                process = Popen(['convert', '-density', dpi, '/tmp/'+str(theuuid)+'.pdf', file_out.name], stdout=PIPE, stderr=PIPE)
+                stdout, stderr = process.communicate()
+                if process.returncode==0:
+                    attachment_filename="formula.png"
+                    return send_file(file_out.name,
                              as_attachment=True,
                              attachment_filename=attachment_filename,
                              mimetype=mimetype)
+                else:
+                    err = stderr.decode("UTF-8")
+                    if len(stderr) < 1:
+                        err = stdout.decode("UTF-8")
+                    return self.errMgmt(err)
+            else:
+                err=stderr.decode("UTF-8")
+                if len(stderr) <1:
+                    err=stdout.decode("UTF-8")
+                return self.errMgmt(err)
         elif matcher: #(decoded.startswith('#gnuplot')):
             file_script=tempfile.NamedTemporaryFile(suffix='.gpt')
             file_output = tempfile.NamedTemporaryFile(suffix='.png')
@@ -91,14 +101,18 @@ class OpenIssue(Resource):
             #print(file_output.name)
             process = Popen(['gnuplot',file_script.name], stdout=PIPE, stderr=PIPE)
             stdout, stderr = process.communicate()
-            #print (stdout)
-            #print('----')
-            #print (stderr)
-            attachment_filename="gnuplot.png"
-            return send_file(file_output.name,
+            if process.returncode==0:
+                attachment_filename="gnuplot.png"
+                return send_file(file_output.name,
                              as_attachment=True,
                              attachment_filename=attachment_filename,
                              mimetype=mimetype)
+            else:
+                err=stderr.decode("UTF-8")
+                if len(stderr) <1:
+                    err=stdout.decode("UTF-8")
+                return self.errMgmt(err)
+
         else:
             if(decoded.startswith('#wireviz')):
                 encoded=plant_uml_decoder.plantuml_encode(decoded)
@@ -132,8 +146,33 @@ class OpenIssue(Resource):
                                          attachment_filename=attachment_filename,
                                          mimetype=mimetype)
             else:
-                dictionary= {}
-                dictionary['msg']='Error'
-                response = jsonify(dictionary)
-                response.status_code = r.status_code
-                return response
+                if r.headers['Content-Type'] == 'image/png':
+                    file_out = tempfile.NamedTemporaryFile()
+                    with open(file_out.name, 'wb') as out_file:
+                        r.raw.decode_content = True
+                        # print('writing '+file_out.name)
+                        out_file.write(r.content)
+                    file_out.seek(0)
+                    if 'Content-Type' in r.headers:
+                        mimetype = r.headers['Content-Type']
+                    if 'Content-Disposition' in r.headers:
+                        attachment_filename = r.headers['Content-Disposition']
+                    return send_file(file_out.name,
+                                     as_attachment=True,
+                                     attachment_filename=attachment_filename,
+                                     mimetype=mimetype)
+                else:
+                    err = r.content.decode("UTF-8")
+                    return self.errMgmt(err)
+    def errMgmt(self, err):
+        """
+        """
+        file_out=tempfile.NamedTemporaryFile(suffix='.png')
+        #resp = Response(err, mimetype='text/plain')
+        #resp.status_code = 200
+        #return resp
+        text2png.text2png(err, file_out.name, fontfullpath="arial.ttf",width=600)
+        return send_file(file_out.name,
+                                as_attachment=True,
+                                attachment_filename='error.png',
+                                mimetype='image/png')
