@@ -51,8 +51,8 @@ class OpenIssue(Resource):
             decoded=decoded[4:].strip()
             #print('TeX')
             #print(decoded)
-            texdoc='\\def\\formula{' + decoded + '}\\input{/home/elbosso/formula.tex}'
-            #texdoc='\\def\\formula{' + decoded + '}\\input{/var/www/apache-flask/formula.tex}'
+            #texdoc='\\def\\formula{' + decoded + '}\\input{/home/elbosso/formula.tex}'
+            texdoc='\\def\\formula{' + decoded + '}\\input{/var/www/apache-flask/formula.tex}'
             #print (texdoc)
             theuuid=uuid.uuid4()
             process = Popen(['pdflatex','-halt-on-error','-jobname',str(theuuid),'-output-directory', '/tmp', texdoc], stdout=PIPE, stderr=PIPE)
