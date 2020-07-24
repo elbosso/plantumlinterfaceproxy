@@ -111,11 +111,6 @@ set yrange [5.2:6.6]
 set title 'Ohne Rücksicht auf Einschwingen des JIT'
 plot '$data' u 1:4 w lp t 'AtomicInteger (Comparable)', '$data' u 1:2 w lp t 'Integer', '$data' u 1:3 w lp t 'AtomicInteger'
 ```
-The application is designed to run inside a docker container. The docker-compose file has preparations to integrate with traefik2.x.
-
-The docker container needs an environment file named _environment.env_ defining Properties as given in the file _environment.example_.
-After the container is started, an _index.html_ file with some introduction and background is reachable that allows - among other things - 
-to access the Swagger UI GUI for experimenting...
 
 ## Error Handling
 
@@ -138,9 +133,16 @@ should build the image that can then be started by issuing
 docker-compose up
 ```
 
+The application is designed to run inside a docker container. The docker-compose file has preparations to integrate with traefik2.x.
+
+After the container is started, an _index.html_ file with some introduction and background is reachable that allows - among other things - 
+to access the Swagger UI GUI for experimenting...
+
 ### Configuration
 
-At the moment it relies on two other servers - one for [Plantuml](https://plantuml.com) and one for [WireViz](https://github.com/formatc1702/WireViz). The configuration for both servers are specified by setting environment variables as can be seen in _environment.example_:
+The docker container needs an environment file named _environment.env_ defining Properties as given in the file _environment.example_.
+
+At the moment the application relies on two other servers - one for [Plantuml](https://plantuml.com) and one for [WireViz](https://github.com/formatc1702/WireViz). The configuration for both servers are specified by setting environment variables as can be seen in _environment.example_:
 
 ```
 PLANTUML_HOST=plantuml.docker.lab
