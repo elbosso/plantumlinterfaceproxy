@@ -20,6 +20,7 @@ RUN apt-get update && apt-get install -y apache2 \
     graphicsmagick-imagemagick-compat \
     plantuml \
     gnuplot \
+    firefox \
     locales locales-all \
  && locale-gen de_DE.UTF-8 \
  && apt-get clean \

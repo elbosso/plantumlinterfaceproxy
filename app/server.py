@@ -1,4 +1,4 @@
-from flask import make_response, jsonify,send_file, Response
+from flask import send_file
 import requests
 from app import api
 import os
@@ -11,6 +11,13 @@ import re
 import uuid
 import sys
 import locale
+from selenium.webdriver import Firefox
+from selenium.webdriver.firefox.options import Options
+from selenium.webdriver.firefox.firefox_profile import FirefoxProfile
+import tempfile
+from shutil import copyfile
+
+
 
 ns = api.namespace('', description='badges for gitlab')
 @ns.route('/proxy/png/<encoded>')
@@ -112,7 +119,41 @@ class OpenIssue(Resource):
                 if len(stderr) <1:
                     err=stdout.decode("UTF-8")
                 return self.errMgmt(err)
+        elif decoded.startswith('#regex'):
+            dir_out = tempfile.TemporaryDirectory()
 
+            print(dir_out.name)
+
+            fxProfile = FirefoxProfile()
+
+            fxProfile.set_preference("browser.download.folderList", 2)
+            fxProfile.set_preference("browser.download.manager.showWhenStarting", False)
+            fxProfile.set_preference("browser.download.dir", dir_out.name)
+            fxProfile.set_preference("browser.helperApps.neverAsk.saveToDisk", "image/png")
+
+            opts = Options()
+            opts.set_headless()
+            assert opts.headless  # Operating in headless mode
+            geckoPath = './geckodriver'
+            browser = Firefox(firefox_profile=fxProfile, executable_path=geckoPath, options=opts)
+            browser.get('https://regexper.com/')
+            search_form = browser.find_element_by_id('regexp-input')
+            search_form.send_keys('abc|def')
+            search_form.submit()
+            links = browser.find_elements_by_class_name('inline-icon')
+            print(len(links))
+            for link in links:
+                print(link.get_attribute("data-action"))
+                if (link.get_attribute("data-action") == 'download-png'):
+                    print(link.get_attribute("href"))
+                    link.click()
+            browser.close()
+            browser.quit()
+            attachment_filename="re.png"
+            return send_file(dir_out.name+'/image.png',
+                         as_attachment=True,
+                         attachment_filename=attachment_filename,
+                         mimetype=mimetype)
         else:
             if(decoded.startswith('#wireviz')):
                 encoded=plant_uml_decoder.plantuml_encode(decoded)

@@ -5,3 +5,4 @@ requests
 flask-restplus
 Werkzeug==0.16.1
 Pillow
+selenium
