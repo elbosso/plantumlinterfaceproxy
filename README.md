@@ -85,8 +85,6 @@ connections:
 
 If the first line of the script starts with *`#gnuplot`* followed by at least one whitespace and a dimension specification in the form of `widthxheight` for example `800x600` then the remainder of the script is processed by [Gnuplot](http://www.gnuplot.info/). This produces a rendering of the contents of the script - the image produced has the dimensions given after `#gnuplot`. This image is returned to Gitlab, replacing the script. An example for this functionality might be the following fragment (enclosed in lines containing ` ```plantuml ` and ` ``` `):
 
-*Please be aware that Gnuplot can execute arbitrary shell commands and therefore can pose a security threat - Use this image at your own discretion. It is probably best to self-host it and only allow users you know and trust!*
-
 ```
 #gnuplot 450x800
 $data << EOD
@@ -115,6 +113,8 @@ set yrange [5.2:6.6]
 set title 'Ohne Rücksicht auf Einschwingen des JIT'
 plot '$data' u 1:4 w lp t 'AtomicInteger (Comparable)', '$data' u 1:2 w lp t 'Integer', '$data' u 1:3 w lp t 'AtomicInteger'
 ```
+
+*Please be aware that Gnuplot can execute arbitrary shell commands and therefore can pose a security threat - Use this image at your own discretion. It is probably best to self-host it and only allow users you know and trust!*
 
 ## Error Handling
 
