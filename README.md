@@ -44,6 +44,8 @@ An example would be the following fragment (again - enclosed in lines containing
 x^n + y^n = z^n
 ```
 
+*Please be aware that TeX is Turing complete (https://elbosso.github.io/tex_virus.html#content) and therefore can pose a security threat (https://elbosso.github.io/resources/tex-login.pdf) - Use this image at your own discretion. It is probably best to self-host it and only allow users you know and trust!*
+
 ### WireViz
 
 If the first line of the script is *`wireviz`* then the remainder of the script is sent on to a [WireViz](https://github.com/formatc1702/WireViz) renderer. This renderer produces and
@@ -82,6 +84,8 @@ connections:
 ### Gnuplot
 
 If the first line of the script starts with *`#gnuplot`* followed by at least one whitespace and a dimension specification in the form of `widthxheight` for example `800x600` then the remainder of the script is processed by [Gnuplot](http://www.gnuplot.info/). This produces a rendering of the contents of the script - the image produced has the dimensions given after `#gnuplot`. This image is returned to Gitlab, replacing the script. An example for this functionality might be the following fragment (enclosed in lines containing ` ```plantuml ` and ` ``` `):
+
+*Please be aware that Gnuplot can execute arbitrary shell commands and therefore can pose a security threat - Use this image at your own discretion. It is probably best to self-host it and only allow users you know and trust!*
 
 ```
 #gnuplot 450x800
