@@ -14,6 +14,9 @@ import locale
 from selenium.webdriver import Firefox
 from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.firefox.firefox_profile import FirefoxProfile
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
 import tempfile
 from shutil import copyfile
 
@@ -120,40 +123,53 @@ class OpenIssue(Resource):
                     err=stdout.decode("UTF-8")
                 return self.errMgmt(err)
         elif decoded.startswith('#regex'):
-            dir_out = tempfile.TemporaryDirectory()
+            #dir_out = tempfile.TemporaryDirectory()
 
-            print(dir_out.name)
+            #print(dir_out.name)
 
-            fxProfile = FirefoxProfile()
+            #fxProfile = FirefoxProfile()
 
-            fxProfile.set_preference("browser.download.folderList", 2)
-            fxProfile.set_preference("browser.download.manager.showWhenStarting", False)
-            fxProfile.set_preference("browser.download.dir", dir_out.name)
-            fxProfile.set_preference("browser.helperApps.neverAsk.saveToDisk", "image/png")
+            #fxProfile.set_preference("browser.download.folderList", 2)
+            #fxProfile.set_preference("browser.download.manager.showWhenStarting", False)
+            #fxProfile.set_preference("browser.download.dir", dir_out.name)
+            #fxProfile.set_preference("browser.helperApps.neverAsk.saveToDisk", "image/png")
 
-            opts = Options()
-            opts.set_headless()
-            assert opts.headless  # Operating in headless mode
-            geckoPath = './geckodriver'
-            browser = Firefox(firefox_profile=fxProfile, executable_path=geckoPath, options=opts)
-            browser.get('https://regexper.com/')
-            search_form = browser.find_element_by_id('regexp-input')
-            search_form.send_keys('abc|def')
-            search_form.submit()
-            links = browser.find_elements_by_class_name('inline-icon')
-            print(len(links))
-            for link in links:
-                print(link.get_attribute("data-action"))
-                if (link.get_attribute("data-action") == 'download-png'):
-                    print(link.get_attribute("href"))
-                    link.click()
-            browser.close()
-            browser.quit()
-            attachment_filename="re.png"
-            return send_file(dir_out.name+'/image.png',
-                         as_attachment=True,
-                         attachment_filename=attachment_filename,
-                         mimetype=mimetype)
+            #opts = Options()
+            #opts.set_headless()
+            #assert opts.headless  # Operating in headless mode
+            #geckoPath = './geckodriver'
+            #browser = Firefox(firefox_profile=fxProfile, executable_path=geckoPath, options=opts)
+            #browser.get('https://regexper.com/')
+            #search_form = browser.find_element_by_id('regexp-input')
+            #search_form.send_keys(decoded[6:])
+            #search_form.submit()
+            #links = browser.find_elements_by_class_name('inline-icon')
+            #print(len(links))
+            #for link in links:
+                #print(link.get_attribute("data-action"))
+                #if (link.get_attribute("data-action") == 'download-png'):
+                    #print(link.get_attribute("href"))
+                    #WebDriverWait(browser, 20).until(EC.element_to_be_clickable((By.XPATH, "//a[starts-with(@data-action, 'download-png')]"))).click()
+                    ##link.click()
+            #browser.close()
+            #browser.quit()
+            process = Popen(['python3','/home/elbosso/src/language_python/plantumlinterfaceproxy/app/regexscraper.py',decoded[6:]], stdout=PIPE, stderr=PIPE)
+            stdout, stderr = process.communicate()
+            if process.returncode==0:
+                file_output=tempfile.NamedTemporaryFile(suffix='.png')
+                fh=open(file_output.name,'wb')
+                fh.write(stdout)
+                fh.seek(0)
+                attachment_filename="regex.png"
+                return send_file(file_output.name,
+                             as_attachment=True,
+                             attachment_filename=attachment_filename,
+                             mimetype=mimetype)
+            else:
+                err=stderr.decode("UTF-8")
+                if len(stderr) <1:
+                    err=stdout.decode("UTF-8")
+                return self.errMgmt(err)
         else:
             if(decoded.startswith('#wireviz')):
                 encoded=plant_uml_decoder.plantuml_encode(decoded)
