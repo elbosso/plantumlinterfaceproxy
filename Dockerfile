@@ -4,10 +4,12 @@
 ############################################################
 
 # Set the base image
-FROM debian:latest
+FROM ubuntu:latest
 
 # File Author / Maintainer
 MAINTAINER Jürgen Key
+
+ENV DEBIAN_FRONTEND noninteractive    # export DEBIAN_FRONTEND="noninteractive"
 
 RUN apt-get update && apt-get install -y apache2 \
     libapache2-mod-wsgi-py3 \
@@ -35,6 +37,10 @@ RUN pip3 install -r /var/www/apache-flask/app/requirements.txt
 COPY ./apache-flask.conf /etc/apache2/sites-available/apache-flask.conf
 RUN a2ensite apache-flask
 RUN a2enmod headers
+
+COPY ./geckodriver /var/www/apache-flask/
+
+RUN chmod -R 777 /var/www
 
 # Copy over the wsgi file
 COPY ./apache-flask.wsgi /var/www/apache-flask/apache-flask.wsgi
