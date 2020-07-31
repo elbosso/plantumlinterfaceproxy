@@ -19,7 +19,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 import tempfile
 from shutil import copyfile
-
+import cairosvg
 
 
 ns = api.namespace('', description='badges for gitlab')
@@ -133,29 +133,48 @@ class OpenIssue(Resource):
                 fxProfile.set_preference("browser.download.folderList", 2)
                 fxProfile.set_preference("browser.download.manager.showWhenStarting", False)
                 fxProfile.set_preference("browser.download.dir", dir_out.name)
-                fxProfile.set_preference("browser.helperApps.neverAsk.saveToDisk", "image/png")
+                fxProfile.set_preference("browser.helperApps.neverAsk.saveToDisk", "image/png,image/svg+xml")
 
                 opts = Options()
                 opts.set_headless()
                 assert opts.headless  # Operating in headless mode
                 geckoPath = './geckodriver'
                 browser = Firefox(firefox_profile=fxProfile, executable_path=geckoPath, options=opts)
-                browser.get('https://regexper.com/')
+                browser.get('http://regexper:8080/')
                 search_form = browser.find_element_by_id('regexp-input')
                 search_form.send_keys(decoded[6:].strip())
                 search_form.submit()
                 links = browser.find_elements_by_class_name('inline-icon')
                 print(len(links))
-                for link in links:
-                    print(link.get_attribute("data-action"))
-                    if (link.get_attribute("data-action") == 'download-png'):
-                        print(link.get_attribute("href"))
-                        WebDriverWait(browser, 20).until(EC.element_to_be_clickable((By.XPATH, "//a[starts-with(@data-action, 'download-png')]"))).click()
-                        link.click()
-                browser.close()
-                browser.quit()
-                attachment_filename = "re.png"
-                return send_file(dir_out.name + '/image.png',
+                if(len(links)>0):
+                    for link in links:
+                        print(link.get_attribute("data-action"))
+                        if (link.get_attribute("data-action") == 'download-png'):
+                            print(link.get_attribute("href"))
+                            WebDriverWait(browser, 20).until(EC.element_to_be_clickable((By.XPATH, "//a[starts-with(@data-action, 'download-png')]"))).click()
+                            link.click()
+                            browser.close()
+                            browser.quit()
+                            attachment_filename = "re.png"
+                            return send_file(dir_out.name + '/image.png',
+                             as_attachment=True,
+                             attachment_filename=attachment_filename,
+                             mimetype=mimetype)
+                else:
+                    links = browser.find_elements_by_class_name('oi')
+                    print('links: '+str(len(links)))
+                    for link in links:
+                        print(link.get_attribute("data-glyph"))
+                        if (link.get_attribute("data-glyph") == 'data-transfer-download'):
+                            print(link.get_attribute("href"))
+                            WebDriverWait(browser, 20).until(EC.element_to_be_clickable((By.XPATH, "//a[starts-with(@data-glyph, 'data-transfer-download')]"))).click()
+                            link.click()
+                            browser.close()
+                            browser.quit()
+                            print(os.listdir(dir_out.name))
+                            cairosvg.svg2png(url=dir_out.name + '/image.svg', write_to=dir_out.name + '/image.png')                        
+                            attachment_filename = "re.png"
+                            return send_file(dir_out.name + '/image.png',
                              as_attachment=True,
                              attachment_filename=attachment_filename,
                              mimetype=mimetype)

@@ -15,7 +15,15 @@ services:
       - "traefik.docker.network=traefik_proxy"
     networks:
       - traefik_proxy
-
+      - default
+      
+  regexper:
+    image: graphite/regexper
+    ports:
+      - 8077:8080
+    networks:
+      - default
+      
 networks:
   traefik_proxy:
     external:
