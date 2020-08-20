@@ -40,7 +40,10 @@ class OpenIssue(Resource):
         try:
             decoded=plant_uml_decoder.plantuml_decode(encoded)
         except:
-            process = Popen(['plantuml','-charset','UTF-8','-decodeurl', encoded[2:]], stdout=PIPE, stderr=PIPE)
+            todecode=encoded
+            if encoded.startswith('~'):
+                todecode=encoded[2:]
+            process = Popen(['plantuml','-charset','UTF-8','-decodeurl', todecode], stdout=PIPE, stderr=PIPE)
             stdout, stderr = process.communicate()
             #print (stdout)
             #print('-++-')
