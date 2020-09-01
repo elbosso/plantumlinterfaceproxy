@@ -65,17 +65,17 @@ class OpenIssue(Resource):
         #print('::')
         #print (decoded)
         matchergnuplot=re.search(r'^#gnuplot\s+?(\d+)x(\d+).*$' ,decoded,re.MULTILINE)
-        matchertex=re.search(r'^%TeX\s+?(\d*).*$' ,decoded,re.MULTILINE)
+        matchertex=re.search(r'^(%TeX\s+?(\d*)).*$' ,decoded,re.MULTILINE)
         #if(matchergnuplot):
             #print('found gnuplot')
         if matchertex:
         #if(decoded.startswith('%TeX')):
-            decoded=decoded[4:].strip()
+            decoded=decoded[len(matchertex.group(1)):].strip()
             #print('TeX')
             #print(decoded)
             #texdoc='\\def\\formula{' + decoded + '}\\input{/home/elbosso/formula.tex}'
-            if self.representsInt(matchertex.group(1)):
-                texdoc='\\def\\formulaCounter{'+matchertex.group(1)+'}\\def\\formula{' + decoded + '}\\input{/var/www/apache-flask/formula.tex}'
+            if self.representsInt(matchertex.group(2)):
+                texdoc='\\def\\formulaCounter{'+matchertex.group(2)+'}\\def\\formula{' + decoded + '}\\input{/var/www/apache-flask/formula.tex}'
             else:
                 texdoc='\\def\\formula{' + decoded + '}\\input{/var/www/apache-flask/formula.tex}'
             #print (texdoc)
