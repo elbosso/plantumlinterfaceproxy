@@ -44,6 +44,16 @@ An example would be the following fragment (again - enclosed in lines containing
 x^n + y^n = z^n
 ```
 
+It is optionally possible to specify equation numbers: if a number is given
+after `%TeX`, the successor if that number is rendered as that equations
+number and can be used as label for references in the surrounding text. An
+Example where *8* would be rendered as equation label is:
+
+```
+%TeX 7
+a+b = c
+```
+
 *Please be aware that TeX is Turing complete (https://elbosso.github.io/tex_virus.html#content) and therefore can pose a security threat (https://elbosso.github.io/resources/tex-login.pdf) - Use this image at your own discretion. It is probably best to self-host it and only allow users you know and trust!*
 
 ### WireViz
