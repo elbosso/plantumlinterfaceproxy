@@ -7,6 +7,11 @@
 \usepackage{varwidth}
 \begin{document}
 \begin{varwidth}{\linewidth}
-\[ \formula \]
+\ifdefined\formulaCounter
+	\setcounter{equation}{\formulaCounter}
+	\begin{align} \formula \end{align}
+\else
+	\[ \formula \]
+\fi
 \end{varwidth}
 \end{document}

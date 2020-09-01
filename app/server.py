@@ -26,6 +26,13 @@ ns = api.namespace('', description='badges for gitlab')
 @ns.route('/proxy/png/<encoded>')
 @ns.param('encoded', 'The encoded script contents')
 class OpenIssue(Resource):
+    @staticmethod
+    def representsInt(s):
+        try:
+            int(s)
+            return True
+        except ValueError:
+            return False
     def get(self, encoded):
         """
         """
@@ -57,15 +64,20 @@ class OpenIssue(Resource):
             decoded=decoded[9:-8].strip()
         #print('::')
         #print (decoded)
-        matcher=re.search(r'^#gnuplot\s+?(\d+)x(\d+).*$' ,decoded,re.MULTILINE)
-        #if(matcher):
+        matchergnuplot=re.search(r'^#gnuplot\s+?(\d+)x(\d+).*$' ,decoded,re.MULTILINE)
+        matchertex=re.search(r'^%TeX\s+?(\d*).*$' ,decoded,re.MULTILINE)
+        #if(matchergnuplot):
             #print('found gnuplot')
-        if(decoded.startswith('%TeX')):
+        if matchertex:
+        #if(decoded.startswith('%TeX')):
             decoded=decoded[4:].strip()
             #print('TeX')
             #print(decoded)
             #texdoc='\\def\\formula{' + decoded + '}\\input{/home/elbosso/formula.tex}'
-            texdoc='\\def\\formula{' + decoded + '}\\input{/var/www/apache-flask/formula.tex}'
+            if self.representsInt(matchertex.group(1)):
+                texdoc='\\def\\formulaCounter{'+matchertex.group(1)+'}\\def\\formula{' + decoded + '}\\input{/var/www/apache-flask/formula.tex}'
+            else:
+                texdoc='\\def\\formula{' + decoded + '}\\input{/var/www/apache-flask/formula.tex}'
             #print (texdoc)
             theuuid=uuid.uuid4()
             process = Popen(['pdflatex','-halt-on-error','-jobname',str(theuuid),'-output-directory', '/tmp', texdoc], stdout=PIPE, stderr=PIPE)
@@ -93,7 +105,7 @@ class OpenIssue(Resource):
                 if len(stderr) <1:
                     err=stdout.decode("UTF-8")
                 return self.errMgmt(err)
-        elif matcher: #(decoded.startswith('#gnuplot')):
+        elif matchergnuplot: #(decoded.startswith('#gnuplot')):
             file_script=tempfile.NamedTemporaryFile(suffix='.gpt')
             file_output = tempfile.NamedTemporaryFile(suffix='.png')
             m = re.search(r'(^\s*?set\s+?output\s*?[\'"]).*?([\'"].*?$)', decoded, re.MULTILINE)
@@ -103,10 +115,10 @@ class OpenIssue(Resource):
                 decoded='set output \''+file_output.name+'\'\n'+decoded
             m = re.search(r'(^\s*?set\s+?terminal.*?$)', decoded, re.MULTILINE)
             if m:
-                decoded=re.sub(r"(^\s*?set\s+?terminal.*?$)", r'set terminal pngcairo size '+matcher.group(1)+','+matcher.group(2)+' enhanced', decoded, flags=re.MULTILINE)
+                decoded=re.sub(r"(^\s*?set\s+?terminal.*?$)", r'set terminal pngcairo size '+matchergnuplot.group(1)+','+matchergnuplot.group(2)+' enhanced', decoded, flags=re.MULTILINE)
             else:
-                decoded='set terminal pngcairo size '+matcher.group(1)+','+matcher.group(2)+' enhanced\n'+decoded
-            #print(matcher.group(1)+','+matcher.group(2))
+                decoded='set terminal pngcairo size '+matchergnuplot.group(1)+','+matchergnuplot.group(2)+' enhanced\n'+decoded
+            #print(matchergnuplot.group(1)+','+matchergnuplot.group(2))
             #print(decoded)
             with open(file_script.name, 'w') as f:
                 f.write(decoded)
