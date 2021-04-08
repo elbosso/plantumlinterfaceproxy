@@ -126,6 +126,23 @@ plot '$data' u 1:4 w lp t 'AtomicInteger (Comparable)', '$data' u 1:2 w lp t 'In
 
 *Please be aware that Gnuplot can execute arbitrary shell commands and therefore can pose a security threat - Use this image at your own discretion. It is probably best to self-host it and only allow users you know and trust!*
 
+### Regular expressions
+
+If the first line starts with *`#regex`* , the remaining text is sent to a (regexper)[https://regexper.com/] instance that renders a 
+railroad diagram for the remaining text - interpreting it as a regular expression - for example this:
+
+```
+#regex
+/((\d{3})(?:\.|-))?(\d{3})(?:\.|-)(\d{4})/g
+```
+
+(enclosed in lines containing ` ```plantuml ` and ` ``` `) would yield the following image in its stead inside gitlab:
+
+![image](https://user-images.githubusercontent.com/18102857/114037796-969ce580-9881-11eb-9ca4-82a7a474f6af.png)
+
+The functionality for rendering the image is self hosted and the system uses a regexper docker container for that, defined inside 
+_docker-compose.xml_ for that purpose - at the time, it is not possible to use an external instance for that.
+
 ## Error Handling
 
 As with the original PlantUML integration - errors during the rendering process are handled by returning HTTP Status *400* and an image
