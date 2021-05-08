@@ -40,7 +40,7 @@ class OpenIssue(Resource):
         print(locale.getdefaultlocale())
         print(locale.getpreferredencoding())
         print(encoded)
-        url = 'http://' + os.environ['PLANTUML_HOST'] + ':' + os.environ['PLANTUML_PORT'] + '/' + os.environ[
+        url = os.environ['PLANTUML_PROTOCOL']+'://' + os.environ['PLANTUML_HOST'] + ':' + os.environ['PLANTUML_PORT'] + '/' + os.environ[
             'PLANTUML_URL'] + '/' + str(encoded)
         attachment_filename = 'plantuml.png'
         mimetype = 'image/png'
@@ -198,7 +198,7 @@ class OpenIssue(Resource):
         else:
             if(decoded.startswith('#wireviz')):
                 encoded=plant_uml_decoder.plantuml_encode(decoded)
-                url = 'http://' + os.environ['WIREVIZ_HOST'] + ':' + os.environ['WIREVIZ_PORT'] + '/' + os.environ[
+                url = os.environ['WIREVIZ_PROTOCOL'] +'://' + os.environ['WIREVIZ_HOST'] + ':' + os.environ['WIREVIZ_PORT'] + '/' + os.environ[
                     'WIREVIZ_URL'] + '/' + str(encoded)
                 attachment_filename = 'wireviz.png'
             else:

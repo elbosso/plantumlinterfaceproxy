@@ -10,8 +10,14 @@ services:
       - environment.env
     labels:
       - "traefik.enable=true"
+      - "traefik.http.routers.plantumlinterfaceproxy-http.entrypoints=http"
+      - "traefik.http.routers.plantumlinterfaceproxy-http.rule=Host(`plantumlinterfaceproxy.docker.lab`)"
+      - "traefik.http.routers.plantumlinterfaceproxy-http.middlewares=plantumlinterfaceproxy-https"
+      - "traefik.http.services.plantumlinterfaceproxy-http.loadbalancer.server.port=80"
+      - "traefik.http.middlewares.plantumlinterfaceproxy-https.redirectscheme.scheme=https"
+      - "traefik.http.routers.plantumlinterfaceproxy.entrypoints=https"
       - "traefik.http.routers.plantumlinterfaceproxy.rule=Host(`plantumlinterfaceproxy.docker.lab`)"
-      - "traefik.http.services.plantumlinterfaceproxy.loadbalancer.server.port=80"
+      - "traefik.http.routers.plantumlinterfaceproxy.tls=true"
       - "traefik.docker.network=traefik_proxy"
     networks:
       - traefik_proxy
