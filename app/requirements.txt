@@ -1,9 +1,9 @@
-Flask
-matplotlib
-image
-requests
-flask-restplus
+Flask==0.12.5
+matplotlib==3.4.3
+image==1.5.33
+requests==2.26.0
+flask-restplus==0.13.0
 Werkzeug==0.16.1
-Pillow
-selenium
-cairosvg
+Pillow==8.4.0
+selenium==4.0.0
+cairosvg==2.5.2
