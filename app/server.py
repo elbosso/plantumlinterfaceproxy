@@ -40,8 +40,8 @@ class OpenIssue(Resource):
         print(locale.getdefaultlocale())
         print(locale.getpreferredencoding())
         print(encoded)
-        url = os.environ['PLANTUML_PROTOCOL']+'://' + os.environ['PLANTUML_HOST'] + ':' + os.environ['PLANTUML_PORT'] + '/' + os.environ[
-            'PLANTUML_URL'] + '/' + str(encoded)
+#        url = os.environ['PLANTUML_PROTOCOL']+'://' + os.environ['PLANTUML_HOST'] + ':' + os.environ['PLANTUML_PORT'] + '/' + os.environ[
+#            'PLANTUML_URL'] + '/' + str(encoded)
         attachment_filename = 'plantuml.png'
         mimetype = 'image/png'
         try:
@@ -151,11 +151,12 @@ class OpenIssue(Resource):
                 fxProfile.set_preference("browser.helperApps.neverAsk.saveToDisk", "image/png,image/svg+xml")
 
                 opts = Options()
-                opts.set_headless()
-                assert opts.headless  # Operating in headless mode
+                #opts.set_headless()
+                opts.add_argument("--headless")
+                #assert opts.headless  # Operating in headless mode
                 geckoPath = './geckodriver'
                 browser = Firefox(firefox_profile=fxProfile, executable_path=geckoPath, options=opts)
-                browser.get('http://regexper:8080/')
+                browser.get('http://dockerhost.docker.lab:8077')
                 search_form = browser.find_element_by_id('regexp-input')
                 search_form.send_keys(decoded[6:].strip())
                 search_form.submit()
