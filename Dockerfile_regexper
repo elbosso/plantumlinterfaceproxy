@@ -1,0 +1,16 @@
+FROM node:10
+
+RUN apt-get update && apt-get install -y \
+  python
+
+RUN git clone https://gitlab.com/javallone/regexper-static
+RUN cd /regexper-static && npm install
+RUN cd /regexper-static && sed -i 's/"start": "webpack-dev-server/"start": "webpack-dev-server --host=0.0.0.0 --public regexper/g' package.json && more package.json
+#COPY package.json /regexper-static/
+RUN cd /regexper-static && npm install gulp 
+RUN cd /regexper-static && yarn build
+
+EXPOSE 8080
+
+CMD cd /regexper-static && yarn start
+

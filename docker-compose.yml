@@ -24,7 +24,10 @@ services:
       - default
       
   regexper:
-    image: graphite/regexper
+    build:
+      context: .
+      dockerfile: Dockerfile_regexper
+#    image: graphite/regexper
     ports:
       - 8077:8080
     networks:
