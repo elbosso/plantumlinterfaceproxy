@@ -3,7 +3,7 @@ matplotlib==3.4.3
 image==1.5.33
 requests==2.26.0
 flask-restplus==0.13.0
-Werkzeug==0.16.1
+Werkzeug==2.2.3
 Pillow==9.0.1
 selenium==4.0.0
 cairosvg==2.5.2
