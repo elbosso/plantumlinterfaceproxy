@@ -20,8 +20,8 @@ services:
       - "traefik.http.routers.plantumlinterfaceproxy.tls=true"
       - "traefik.docker.network=traefik_proxy"
     networks:
-      - traefik_proxy
       - default
+      - traefik_proxy
       
   regexper:
     build:
