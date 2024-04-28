@@ -204,8 +204,11 @@ class OpenIssue(Resource):
                 url = os.environ['WIREVIZ_PROTOCOL'] +'://' + os.environ['WIREVIZ_HOST'] + ':' + os.environ['WIREVIZ_PORT'] + '/' + os.environ[
                     'WIREVIZ_URL'] + '/' + str(encoded)
                 attachment_filename = 'wireviz.png'
+            elif decoded.startswith("'roughify!"):
+                url = os.environ['ROUGHIFY_PLANTUML_PROTOCOL']+'://' + os.environ['ROUGHIFY_PLANTUML_HOST'] + ':' + os.environ['ROUGHIFY_PLANTUML_PORT'] + '/' + os.environ['ROUGHIFY_PLANTUML_URL'] + '/' + str(encoded)
+                attachment_filename = 'plantuml.png'
             else:
-                url = 'http://' + os.environ['PLANTUML_HOST'] + ':' + os.environ['PLANTUML_PORT'] + '/' + os.environ['PLANTUML_URL'] + '/' + str(encoded)
+                url = os.environ['PLANTUML_PROTOCOL']+'://' + os.environ['PLANTUML_HOST'] + ':' + os.environ['PLANTUML_PORT'] + '/' + os.environ['PLANTUML_URL'] + '/' + str(encoded)
                 attachment_filename = 'plantuml.png'
             #print(url)
     #        headers = {'Private-Token': os.environ['GITLAB_SECRET']}
