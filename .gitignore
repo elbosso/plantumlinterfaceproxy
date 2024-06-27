@@ -6,4 +6,5 @@ venv
 *.log
 *.pdf
 environment.env
-*.png
+java*.png
+get-pip.py
